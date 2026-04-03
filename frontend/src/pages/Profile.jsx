@@ -9,6 +9,7 @@ import {
   onSnapshot,
   updateDoc
 } from "firebase/firestore";
+import { COLLECTIONS } from "../constants/firestorePaths";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Sidebar from "../components/Sidebar";
 import Chatbot from "../components/Chatbot";
@@ -20,11 +21,15 @@ const Profile = () => {
   const auth = getAuth();
   const db = getFirestore();
 
+  const role = userData?.role || "";
+  const subject = role === "teacher" ? (userData?.subject || "") : "";
+  const educationLevel = role === "learner" ? (userData?.education_lvl || "") : "";
+
   useEffect(() => {
     const fetchData = async (uid) => {
       if (!uid) return;
 
-      const userDocRef = doc(db, "Users", uid);
+      const userDocRef = doc(db, COLLECTIONS.USERS, uid);
       const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         setUserData(userDoc.data());
@@ -32,7 +37,7 @@ const Profile = () => {
 
       //notifications
       const notificationsQuery = query(
-        collection(db, "users", uid, "notifications"),
+        collection(db, COLLECTIONS.USERS, uid, "notifications"),
         where("read", "==", false)
       );
       
@@ -65,7 +70,7 @@ const Profile = () => {
     try {
       if (!auth.currentUser) return;
       
-      await updateDoc(doc(db, "users", auth.currentUser.uid, "notifications", notificationId), {
+      await updateDoc(doc(db, COLLECTIONS.USERS, auth.currentUser.uid, "notifications", notificationId), {
         read: true
       });
 
@@ -82,7 +87,7 @@ const Profile = () => {
       if (!auth.currentUser || notifications.length === 0) return;
       
       const batchPromises = notifications.map(notification =>
-        updateDoc(doc(db, "users", auth.currentUser.uid, "notifications", notification.id), {
+        updateDoc(doc(db, COLLECTIONS.USERS, auth.currentUser.uid, "notifications", notification.id), {
           read: true
         })
       );

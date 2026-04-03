@@ -18,7 +18,7 @@ export default function Header() {
   }, []);
 
   return (
-    <nav className="absolute top-0 left-0 w-full flex justify-between items-center px-10 py-4 bg-transparent text-black z-50">
+    <nav className="absolute top-0 left-0 w-full flex justify-between items-center px-4 md:px-10 py-4 bg-transparent text-black z-50">
   <div className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/")}>
     <img src="/learnify1.png" alt="Logo" className="h-7 w-auto -mt-1" />  
     <h1 className="text-2xl font-bold tracking-wide">earnify</h1>
@@ -62,7 +62,7 @@ export default function Header() {
         </li>
       </ul>
 
-      <div className="space-x-4">
+      <div className="flex items-center gap-2 md:gap-4">
         <motion.button
           className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
           whileHover={{ scale: 1.1 }}

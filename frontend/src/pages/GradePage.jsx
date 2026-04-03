@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { COLLECTIONS } from "../constants/firestorePaths";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Sidebar from "../components/Sidebar";
 import Chatbot from "../components/Chatbot";
@@ -13,7 +14,7 @@ const GradePage = () => {
   useEffect(() => {
     const fetchUserData = async (uid) => {
       if (!uid) return;
-      const userDocRef = doc(db, "Users", uid);
+      const userDocRef = doc(db, COLLECTIONS.USERS, uid);
       const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         setUserData(userDoc.data());

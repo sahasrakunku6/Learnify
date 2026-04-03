@@ -94,12 +94,12 @@ export default function MainPage() {
   return (
     <div className="relative w-full min-h-screen text-black">
       <motion.div
-        className="relative w-full h-screen flex flex-col items-start justify-center px-10 text-left"
+        className="relative w-full min-h-screen flex flex-col items-start justify-center px-6 md:px-10 text-left overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
       >
-        <div className="absolute top-10 right-10 w-200">
+        <div className="absolute top-24 right-6 md:right-10 w-[800px] md:w-[700px] max-w-[45vw]">
           {heroAnimation ? <Lottie animationData={heroAnimation} loop={true} /> : <p>Loading...</p>}
         </div>
         {/* Header */}
@@ -111,8 +111,8 @@ export default function MainPage() {
           animate={{ scale: 1 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-6xl font-bold drop-shadow-lg">Empower Learning with AI</h1>
-          <p className="text-lg mt-4 drop-shadow-md">
+          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">Empower Learning with AI</h1>
+          <p className="text-base md:text-lg mt-4 drop-shadow-md max-w-xl">
             Personalized education for every student, powered by cutting-edge AI technology.
           </p>
           <motion.button
@@ -173,7 +173,7 @@ export default function MainPage() {
               {/* Left - Lottie Animation */}
               <div className="flex justify-center items-center">
                 {aboutAnimation ? (
-                  <Lottie animationData={aboutAnimation} className="w-100 h-100" />
+                  <Lottie animationData={aboutAnimation} className="w-[280px] h-[280px] md:w-[400px] md:h-[400px]" />
                 ) : (
                   <p className="text-center">Loading animation...</p>
                 )}
@@ -219,7 +219,7 @@ export default function MainPage() {
                   <img
                     src={review.image}
                     alt={review.name}
-                    className="w-26 h-26 object-cover rounded-2xl"
+                    className="w-24 h-24 md:w-[104px] md:h-[104px] object-cover rounded-2xl"
                   />
                 </div>
 

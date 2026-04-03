@@ -5,6 +5,7 @@ import { auth } from "../firebase";
 import Lottie from "lottie-react";
 import Header from "../components/Header.jsx";
 import { getFirestore, doc, getDoc } from "firebase/firestore"; 
+import { COLLECTIONS } from "../constants/firestorePaths";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -35,7 +36,7 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      const userDocRef = doc(db, "Users", user.uid);
+      const userDocRef = doc(db, COLLECTIONS.USERS, user.uid);
       const userDoc = await getDoc(userDocRef);
       
       if (!userDoc.exists()) {

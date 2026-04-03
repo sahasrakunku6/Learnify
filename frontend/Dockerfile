@@ -1,22 +1,17 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install git + bash (needed for some npm scripts)
-RUN apk add --no-cache git bash
+COPY package*.json ./
+RUN npm install
 
-# Copy only dependency files first
-COPY package.json pnpm-lock.yaml ./
-
-# Install dependencies
-RUN npm install -g pnpm && pnpm install
-
-# Copy the rest of the app
 COPY . .
+RUN npm run build
 
-# Build the app
-RUN pnpm run build
+FROM nginx:alpine
 
-EXPOSE 3000
-CMD ["pnpm", "run", "dev"]
+COPY --from=builder /app/dist /usr/share/nginx/html
 
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

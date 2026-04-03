@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Chatbot from "../components/Chatbot";
+import { API_BASE } from "../config.js";
+import apiClient from "../apiClient";
 
 const VideoResources = () => {
   const [videos, setVideos] = useState([]);
@@ -49,14 +51,8 @@ const VideoResources = () => {
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:5000/api/youtube/search?query=${encodeURIComponent(query)}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setVideos(data);
+      const response = await apiClient.get(`/api/youtube/search?query=${encodeURIComponent(query)}`);
+      setVideos(response.data);
     } catch (error) {
       console.error("Error fetching videos:", error);
       setError("Failed to fetch videos. Please try again.");

@@ -71,4 +71,6 @@ frontend/.env
 
 backend/serviceAccountKey.json
 
+frontend/dist/
+
 

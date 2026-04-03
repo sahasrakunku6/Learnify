@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { 
-  getFirestore, 
-  collection, 
-  query, 
-  where, 
-  onSnapshot,
-  doc,
-  getDoc,
-  updateDoc
-} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Sidebar from "../components/Sidebar";
 import Chatbot from "../components/Chatbot";
+import apiClient from "../apiClient";
 
 const Assignments = () => {
   const [userData, setUserData] = useState(null);
@@ -19,67 +10,44 @@ const Assignments = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
-  const db = getFirestore();
 
   useEffect(() => {
-    const fetchData = async (uid) => {
-      if (!uid) return;
+    const fetchData = async () => {
+      try {
+        // Fetch assignments
+        const assignmentsResponse = await apiClient.get("/assignments");
+        setAssignments(assignmentsResponse.data || []);
+        // Fetch notifications
+        const notificationsResponse = await apiClient.get("/notifications");
+        setNotifications(notificationsResponse.data);
 
-      const userDocRef = doc(db, "Users", uid);
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        setUserData(userDoc.data());
+        setUserData({}); // Placeholder
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
-      
-      const assignmentsQuery = query(
-        collection(db, "assignments"),
-        where("status", "==", "active")
-      );
-      
-      const unsubscribeAssignments = onSnapshot(assignmentsQuery, (snapshot) => {
-        const assignmentsData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setAssignments(assignmentsData);
-      });
-
-      // notifications
-      const notificationsQuery = query(
-        collection(db, "users", uid, "notifications"),
-        where("read", "==", false)
-      );
-      
-      const unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
-        const notificationsData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setNotifications(notificationsData);
-      });
-
-      setLoading(false);
-      return () => {
-        unsubscribeAssignments();
-        unsubscribeNotifications();
-      };
     };
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        fetchData(user.uid);
+        fetchData();
       } else {
         setLoading(false);
       }
     });
 
     return () => unsubscribe();
-  }, [db, auth]);
+  }, [auth]);
 
   const markAsRead = async (notificationId) => {
-    await updateDoc(doc(db, "users", auth.currentUser.uid, "notifications", notificationId), {
-      read: true
-    });
+    try {
+      await apiClient.put(`/notifications/${notificationId}/read`);
+      // Update local state
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
   };
 
   if (loading) return <h1 className="text-center text-xl">Loading...</h1>;

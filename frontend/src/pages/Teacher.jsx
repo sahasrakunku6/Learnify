@@ -10,6 +10,7 @@ import {
   doc,
   getDoc
 } from "firebase/firestore";
+import { COLLECTIONS } from "../constants/firestorePaths";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +34,7 @@ const TeacherDashboard = () => {
   useEffect(() => {
     const fetchUserData = async (uid) => {
       if (!uid) return;
-      const userDocRef = doc(db, "Users", uid);
+      const userDocRef = doc(db, COLLECTIONS.USERS, uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
@@ -54,7 +55,7 @@ const TeacherDashboard = () => {
   }, [db, auth]);
 
   const getStudents = async () => {
-    const studentsRef = collection(db, "Users");
+    const studentsRef = collection(db, COLLECTIONS.USERS);
     const q = query(studentsRef, where("role", "==", "learner"));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => doc.id);
@@ -65,7 +66,7 @@ const TeacherDashboard = () => {
       const students = await getStudents();
 
       const notificationPromises = students.map(async (studentId) => {
-        await addDoc(collection(db, "users", studentId, "notifications"), {
+        await addDoc(collection(db, COLLECTIONS.USERS, studentId, "notifications"), {
           message: `New assignment: ${title}`,
           type: "assignment",
           assignmentId: assignmentId,

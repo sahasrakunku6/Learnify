@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-const API_BASE = import.meta.env.VITE_API_BASE;
+import { API_BASE } from "../config.js";
 
 
 export default function SignUp() {

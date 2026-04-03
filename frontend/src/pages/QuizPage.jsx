@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Chatbot from "../components/Chatbot";
+import { API_BASE } from "../config.js";
 
 const QuizPage = () => {
     const [topic, setTopic] = useState("");              // what user types
@@ -28,7 +29,7 @@ const QuizPage = () => {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:5000/generate-quiz", {
+            const response = await axios.post(`${API_BASE}/generate-quiz`, {
                 topic,
                 difficulty, // use selected difficulty
             });

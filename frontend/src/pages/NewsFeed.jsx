@@ -2,27 +2,39 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { motion } from "framer-motion";
 import Chatbot from "../components/Chatbot";
-import axios from "axios";
+import apiClient from "../apiClient";
 
 
 const NewsFeed = () => {
   const [query, setQuery] = useState("latest news");
   const [news, setNews] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const fetchNews = async (searchQuery) => {
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) return;
 
-    const url = `http://localhost:5000/search?q=${encodeURIComponent(trimmedQuery)}`;
-
-
     try {
-      const response = await axios.get(url);
+      setLoading(true);
+      setError("");
+      const response = await apiClient.get(`/search?q=${encodeURIComponent(trimmedQuery)}`);
       setNews(response.data.items || []);
     } catch (error) {
-      console.error("Error fetching news:", error);
-    }
+      console.error("Full news error:", error);
+      console.error("Backend response data:", error?.response?.data);
+      console.error("Backend status:", error?.response?.status);
 
+      setError(
+        error?.response?.data?.error ||
+        error?.message ||
+        "Failed to fetch news."
+      );
+      setNews([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -61,7 +73,11 @@ const NewsFeed = () => {
         </form>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-4">
-          {news.length > 0 ? (
+          {loading ? (
+            <p className="text-center text-gray-600 col-span-full">Loading news...</p>
+          ) : error ? (
+            <p className="text-center text-red-600 col-span-full">{error}</p>
+          ) : news.length > 0 ? (
             news.map((article, index) => (
               <motion.div
                 key={index}

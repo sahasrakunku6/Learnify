@@ -1,32 +1,21 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBnLKxNDdRTl7FQCuHZ87-rh9K_SHBFwLg",
-  authDomain: "learnify-a7d07.firebaseapp.com",
-  projectId: "learnify-a7d07",
-  storageBucket: "learnify-a7d07.firebasestorage.app",
-  messagingSenderId: "452008228072",
-  appId: "1:452008228072:web:8c9b2af4f0c983d85a455d",
-  measurementId: "G-7BYJE2M708"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 const analytics = getAnalytics(app);
-export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
-export const db = getFirestore(app);
-export { analytics };
 
-
-const signInWithGoogle = async () => {
-    try {
-        const result = await signInWithPopup(auth, provider);
-        console.log(result.user);
-    } catch (error) {
-        console.error(error);
-    }
-};
+export { app, auth, db, analytics };
